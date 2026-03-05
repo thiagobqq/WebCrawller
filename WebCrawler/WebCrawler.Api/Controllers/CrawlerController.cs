@@ -5,6 +5,8 @@ using WebCrawler.Domain.DTO;
 using WebCrawler.Domain.Interfaces.Repositories;
 using WebCrawler.Application;
 using WebCrawler.Domain.Interfaces.Services;
+using WebCrawler.Application.Events;
+using WebCrawler.Domain.Events;
 
 namespace WebCrawler.Api.Controllers
 {
@@ -20,6 +22,11 @@ namespace WebCrawler.Api.Controllers
         public async Task<IActionResult> Enqueue([FromBody] string url)
         {
             _crawlerService.EnqueueUrl(url);
+            
+            // Publica evento de fila atualizada
+            var queue = await _crawlerService.GetQueue();
+            DomainEventPublisher.Publish(new QueueUpdatedEvent(queue.Count, queue));
+            
             return Accepted();
         }
 
@@ -37,11 +44,23 @@ namespace WebCrawler.Api.Controllers
             return Ok();
         }
 
-        [HttpGet("queue")]
-        public async Task<IActionResult> GetQueue()
+
+        [HttpPost("clear")]
+        public async Task ClearCrawl()
         {
-            var queue = await _crawlerService.GetQueue();
-            return Ok(new { count = queue.Count, urls = queue });
+            throw new System.NotImplementedException("This endpoint is not implemented yet.");
+        }
+
+        [HttpPost("addUrl")]
+        public async Task AddCrawledUrl(string url)
+        {
+            throw new System.NotImplementedException("This endpoint is not implemented yet.");
+        }
+
+        [HttpPost("removeUrl")]
+        public async Task RemoveCrawledUrl(string url)
+        {
+            throw new System.NotImplementedException("This endpoint is not implemented yet.");
         }
     }
 }
