@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebCrawler.Application.Manager;
 using WebCrawler.Application.Services;
 using WebCrawler.Domain.Interfaces.Repositories;
 using WebCrawler.Domain.Interfaces.Services;
@@ -16,6 +17,10 @@ namespace WebCrawler.Api
             services.AddScoped<IPageRepository, PageRepository>();
             services.AddScoped<ICrawlerService, CrawlerService>();
             services.AddScoped<IPageService, PageService>();
+
+            services.AddSingleton<SpiderManager>();
+            services.AddSingleton<CrawlerManager>();
+            
             return services;
         }
     }

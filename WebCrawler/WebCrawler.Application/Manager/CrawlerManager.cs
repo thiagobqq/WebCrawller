@@ -11,6 +11,10 @@ namespace WebCrawler.Application.Manager
 {
     public class CrawlerManager
     {
+        
+        private readonly SpiderManager _spiderManager;
+        
+        public CrawlerManager (SpiderManager spiderManager) => _spiderManager = spiderManager;
         public async Task<PageDTO?> ProcessPage(string url)
         {
             var web = new HtmlWeb();
@@ -47,7 +51,7 @@ namespace WebCrawler.Application.Manager
                     if (!string.IsNullOrEmpty(hrefValue) && Uri.IsWellFormedUriString(hrefValue, UriKind.Absolute))
                     {
                         urls.Add(hrefValue);
-                        WebCrawler.SPIDER_MANAGER.EnqueueUrl(hrefValue);
+                        _spiderManager.EnqueueUrl(hrefValue);
                     }
                 }
             }
