@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using WebCrawler.Domain.Interfaces.Repositories;
@@ -13,14 +14,14 @@ namespace WebCrawler.Application.Worker
     public class QueueConsumer : BackgroundService
     {
         private readonly ILogger<QueueConsumer> _logger;
-        private readonly IPageRepository   _pageRepository;       
+        private readonly IServiceScopeFactory _scopeFactory;
         private readonly SpiderManager _spiderManager;
         private readonly CrawlerManager _crawlerManager;
 
-        public QueueConsumer(ILogger<QueueConsumer> logger, IPageRepository pageRepository,  SpiderManager spiderManager, CrawlerManager crawlerManager)
+        public QueueConsumer(ILogger<QueueConsumer> logger, IServiceScopeFactory scopeFactory, SpiderManager spiderManager, CrawlerManager crawlerManager)
         {
             _logger = logger;
-            _pageRepository = pageRepository;
+            _scopeFactory = scopeFactory;
             _spiderManager = spiderManager;
             _crawlerManager = crawlerManager;
         }
@@ -41,7 +42,9 @@ namespace WebCrawler.Application.Worker
                         var page = await _crawlerManager.ProcessPage(url);
                         if (page != null)
                         {
-                            await _pageRepository.SavePageAsync(page);
+                            using var scope = _scopeFactory.CreateScope();
+                            var pageRepository = scope.ServiceProvider.GetRequiredService<IPageRepository>();
+                            await pageRepository.SavePageAsync(page);
                             _logger.LogInformation("URL saved: {Url}", url);
                             
                             DomainEventPublisher.Publish(new PageSavedEvent(page.Url, page.Title));
@@ -55,7 +58,7 @@ namespace WebCrawler.Application.Worker
                             _logger.LogWarning("Failed to process URL: {Url}", url);
                         }                       
                             
-                        
+
                     }
                 }
 
