@@ -1,7 +1,7 @@
 using DotNetEnv;
 using WebCrawler.Api.Configuration;
 
-Env.Load();
+Env.TraversePath().Load();
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddApi()

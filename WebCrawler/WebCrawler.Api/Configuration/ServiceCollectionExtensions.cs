@@ -37,8 +37,8 @@ namespace WebCrawler.Api.Configuration
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API WebCrawler", Version = "v1" });
             });
-
-            builder.WebHost.UseUrls("http://0.0.0.0:5000");
+            var port = Environment.GetEnvironmentVariable("WEBCRAWLLER_API_PORT") ?? "5000";
+            builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
             return builder;
         }
