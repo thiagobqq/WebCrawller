@@ -10,7 +10,7 @@ namespace WebCrawler.Api.Configuration
     {
         public static WebApplicationBuilder AddApi(this WebApplicationBuilder builder)
         {
-            var envConn = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+            var envConn = Environment.GetEnvironmentVariable("WEBCRAWLLER_CONNECTION_STRING");
             if (!string.IsNullOrWhiteSpace(envConn))
             {
                 builder.Configuration["ConnectionStrings:DefaultConnection"] = envConn;
@@ -59,9 +59,9 @@ namespace WebCrawler.Api.Configuration
         private static string ResolveConnectionString(IConfiguration configuration)
         {
             return configuration.GetConnectionString("DefaultConnection")
-                ?? configuration["CONNECTION_STRING"]
+                ?? configuration["WEBCRAWLLER_CONNECTION_STRING"]
                 ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
-                ?? Environment.GetEnvironmentVariable("CONNECTION_STRING")
+                ?? Environment.GetEnvironmentVariable("WEBCRAWLLER_CONNECTION_STRING")
                 ?? throw new InvalidOperationException("Connection string nao configurada.");
         }
     }

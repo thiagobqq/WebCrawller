@@ -18,9 +18,9 @@ namespace WebCrawler.Api.Configuration
                 var logger = services.GetRequiredService<ILogger<Program>>();
 
                 var connectionString = app.Configuration.GetConnectionString("DefaultConnection")
-                    ?? app.Configuration["CONNECTION_STRING"]
+                    ?? app.Configuration["WEBCRAWLLER_CONNECTION_STRING"]
                     ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
-                    ?? Environment.GetEnvironmentVariable("CONNECTION_STRING")
+                    ?? Environment.GetEnvironmentVariable("WEBCRAWLLER_CONNECTION_STRING")
                     ?? throw new InvalidOperationException("Connection string nao configurada.");
 
                 EnsureDatabaseExists(connectionString, logger);
