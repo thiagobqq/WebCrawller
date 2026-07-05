@@ -10,6 +10,29 @@ services:
       - "1434:1433"
     volumes:
       - sqlserver-data:/var/opt/mssql
+    networks:
+      - crawler-network
+    restart: always
+
+  rabbitmq:
+    image: rabbitmq:4.0-management
+    container_name: rabbitmq_manager
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - crawler-network
+    restart: always
 
 volumes:
   sqlserver-data:
+  rabbitmq_data:
+
+networks:
+  crawler-network:
+    driver: bridge

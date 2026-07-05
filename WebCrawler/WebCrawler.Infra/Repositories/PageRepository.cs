@@ -15,11 +15,11 @@ namespace WebCrawler.Infra.Repositories
     {
         private readonly WebCrawlerDbContext _context;
         public PageRepository(WebCrawlerDbContext context) => _context = context;
-        
-        public async Task SavePageAsync(PageDTO page)
+
+        public async Task<Page?> SavePageAsync(PageDTO page)
         {
             if (await _context.Pages.AnyAsync(p => p.Url == page.Url))
-                return;
+                return null;
 
             var pageEntity = new Page
             {
@@ -29,18 +29,11 @@ namespace WebCrawler.Infra.Repositories
             };
 
             _context.Pages.Add(pageEntity);
-            
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                if (ex.InnerException is SqlException sqlEx && (sqlEx.Number == 2601 || sqlEx.Number == 2627))                
-                    return;               
-                throw;
-            }
+
+            await _context.SaveChangesAsync();
+            return pageEntity;
         }
+
 
         public async Task<bool> IsPageAlreadyVisited(string url)
         {
